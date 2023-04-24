@@ -1,18 +1,15 @@
 resource "aws_iam_role" "default" {
   name               = "${var.lambda_function_name}-execution-role"
-  assume_role_policy = data.aws_iam_policy_document.default.json
+  assume_role_policy = data.aws_iam_policy_document.assume_role_policy_document.json
 }
 
 resource "aws_iam_role_policy_attachment" "default" {
   role       = aws_iam_role.default.name
-  policy_arn = data.aws_iam_policy.default.arn
+  policy_arn = aws_iam_policy.execution_policy.arn
 }
 
-data "aws_iam_policy" "default" {
-  arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-}
 
-data "aws_iam_policy_document" "default" {
+data "aws_iam_policy_document" "assume_role_policy_document" {
   statement {
     effect = "Allow"
 
@@ -22,5 +19,23 @@ data "aws_iam_policy_document" "default" {
     }
 
     actions = ["sts:AssumeRole"]
+  }
+}
+
+resource "aws_iam_policy" "execution_policy" {
+  name = "${var.lambda_function_name}-execution-policy"
+  policy = data.aws_iam_policy_document.execution_policy_document.json
+}
+
+data "aws_iam_policy_document" "execution_policy_document" {
+  statement {
+    effect = "Allow"
+    resources = [ "*" ]
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+      "ce:GetCostAndUsage"
+    ]
   }
 }
