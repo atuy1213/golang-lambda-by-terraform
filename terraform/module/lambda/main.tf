@@ -6,6 +6,14 @@ resource "aws_lambda_function" "default" {
   runtime       = "go1.x"
   source_code_hash = data.archive_file.default.output_base64sha256
   publish = true
+
+  environment {
+    variables = {
+      SLACK_WEBHOOK_URL = "<write your slack webhook url>"
+      COST_EXPLORE_URL = "https://us-east-1.console.aws.amazon.com/cost-management/home?region=ap-northeast-1#/dashboard"
+      CLOUD_WATCH_URL = "https://ap-northeast-1.console.aws.amazon.com/cloudwatch/home?region=ap-northeast-1#dashboards:"
+    }
+  }
 }
 
 resource "null_resource" "default" {
