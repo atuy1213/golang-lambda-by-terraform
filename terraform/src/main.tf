@@ -1,5 +1,5 @@
 locals {
-  lambda_function_name = "golang-lambda-by-terraform-executor"
+  lambda_function_name = "aws-billing-reporter"
 }
 
 module "iam" {
